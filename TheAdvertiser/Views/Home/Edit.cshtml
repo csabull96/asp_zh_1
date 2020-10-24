@@ -10,7 +10,7 @@
 <h4>Advertisement</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-4">
 		<form asp-controller="Home" asp-action="Edit" method="post" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<input type="hidden" asp-for="UID" />
@@ -57,9 +57,9 @@
 			</div>
 		</form>
     </div>
-	<div class="col-md-8">
+	<div class="col-8">
 		<div class="form-group">
-			<img src="@Url.ActionLink("GetPhoto", "Home", new { uid = Model.UID })" />
+			<img style="max-width: 100%" src="@Url.ActionLink("GetPhoto", "Home", new { uid = Model.UID })" />
 		</div>
 	</div>
 </div>
