@@ -11,44 +11,57 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="UID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
+		<form asp-controller="Home" asp-action="Edit" method="post" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="UID" />
+			<input type="hidden" asp-for="ContentType" />
+			<input type="hidden" asp-for="Photo" />
+			<input type="hidden" asp-for="Created" />
+			<div class="form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Price" class="control-label"></label>
+				<input asp-for="Price" class="form-control" />
+				<span asp-validation-for="Price" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Email" class="control-label"></label>
+				<input asp-for="Email" class="form-control" />
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="City" class="control-label"></label>
+				<input asp-for="City" class="form-control" />
+				<span asp-validation-for="City" class="text-danger"></span>
+			</div>
 			<div class="form-group">
 				<label asp-for="ReceivingOption" class="control-label"></label>
 				<select asp-for="ReceivingOption" asp-items="Html.GetEnumSelectList<ParcelReceivingOption>()" class="form-control"></select>
 				<span asp-validation-for="ReceivingOption" class="text-danger"></span>
 			</div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" disabled/>
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+			<div class="form-group">
+				<label asp-for="Created" class="control-label"></label>
+				<input asp-for="Created" class="form-control" disabled />
+				<span asp-validation-for="Created" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Change Photo</label>
+				<input type="file" asp-for="PhotoData" class="form-control-file" />
+				<span asp-validation-for="PhotoData" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+			</div>
+		</form>
     </div>
+	<div class="col-md-8">
+		<div class="form-group">
+			<img src="@Url.ActionLink("GetPhoto", "Home", new { uid = Model.UID })" />
+		</div>
+	</div>
 </div>
 
 <div>

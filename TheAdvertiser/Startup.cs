@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TheAdvertiser.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TheAdvertiser.Data;
 using TheAdvertiser.Models;
 
 namespace TheAdvertiser
@@ -25,7 +19,6 @@ namespace TheAdvertiser
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -35,8 +28,6 @@ namespace TheAdvertiser
 
                 options.UseLazyLoadingProxies();
             });
-
-            //services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddTransient<IAdvertiserRepository, AdvertiserRepository>();
 
@@ -56,7 +47,6 @@ namespace TheAdvertiser
             services.AddRazorPages();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -77,10 +67,6 @@ namespace TheAdvertiser
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            //app.UseMvcWithDefaultRoute();
-
-
 
             app.UseEndpoints(endpoints =>
             {

@@ -39,28 +39,28 @@
 				<img src="@Url.Action("GetPhoto", "Home", new { uid = item.UID })"
 					 width="128" />
 			</td>
-			<td>
+			<td class="content-center">
 				@Html.DisplayFor(modelItem => item.Name)
 			</td>
-			<td>
+			<td class="content-center">
 				@Html.DisplayFor(modelItem => item.Price)
 			</td>
-			<td>
+			<td class="content-center">
 				@Html.DisplayFor(modelItem => item.Email)
 			</td>
-			<td>
+			<td class="content-center">
 				@Html.DisplayFor(modelItem => item.City)
 			</td>
-			<td>
+			<td class="content-center">
 				@Html.DisplayFor(modelItem => item.ReceivingOption)
 			</td>
-			<td>
+			<td class="content-center">
 				@{
 					var user = await UserManager.GetUserAsync(User);
 					if (user != null && await UserManager.IsInRoleAsync(user, "Admin"))
 					{
-						<a asp-controller="Home" asp-action="Edit" asp-route-uid="@item.UID">Edit</a>
-						<a asp-controller="Home" asp-action="Delete" asp-route-uid="@item.UID">Delete</a>
+						<a class="btn btn-primary" asp-controller="Home" asp-action="Edit" asp-route-uid="@item.UID">Edit</a>
+						<a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-uid="@item.UID">Delete</a>
 					}
 				}
 			</td>

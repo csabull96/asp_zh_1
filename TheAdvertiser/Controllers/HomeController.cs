@@ -91,12 +91,14 @@ namespace TheAdvertiser.Controllers
             {
                 var user = await userManager.GetUserAsync(User);
                 ad.UID = Guid.NewGuid().ToString();
-                
-                using (var stream = ad.PhotoData.OpenReadStream())
+                if (ad.PhotoData != null)
                 {
-                    ad.ContentType = ad.PhotoData.ContentType;
-                    ad.Photo = new byte[ad.PhotoData.Length];
-                    stream.Read(ad.Photo, 0, ad.Photo.Length);
+                    using (var stream = ad.PhotoData.OpenReadStream())
+                    {
+                        ad.ContentType = ad.PhotoData.ContentType;
+                        ad.Photo = new byte[ad.PhotoData.Length];
+                        stream.Read(ad.Photo, 0, ad.Photo.Length);
+                    }
                 }
 
                 ad.Email = user.Email;
@@ -119,6 +121,16 @@ namespace TheAdvertiser.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Advertisement ad)
         {
+            if (ad.PhotoData != null)
+            {
+                using (var stream = ad.PhotoData.OpenReadStream())
+                {
+                    ad.ContentType = ad.PhotoData.ContentType;
+                    ad.Photo = new byte[ad.PhotoData.Length];
+                    stream.Read(ad.Photo, 0, ad.Photo.Length);
+                }
+            }
+
             await advertiserRepository.Update(ad);
             return RedirectToAction(nameof(Index));
         }
@@ -128,13 +140,6 @@ namespace TheAdvertiser.Controllers
         {
             await advertiserRepository.Delete(uid);
             return RedirectToAction(nameof(Index));
-        }
-
-        
-        [Authorize(Roles = "Admin")]
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
