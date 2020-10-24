@@ -29,11 +29,28 @@ namespace TheAdvertiser
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
+            {
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                    Configuration.GetConnectionString("DefaultConnection"));
+
+                options.UseLazyLoadingProxies();
+            });
+
+            services.AddTransient<IAdvertiserRepository, AdvertiserRepository>();
+
+            services.AddDefaultIdentity<AppUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+            
             services.AddRazorPages();
         }
 
