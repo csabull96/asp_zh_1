@@ -33,5 +33,30 @@ namespace TheAdvertiser.Models
             appDbContext.Advertisements.Add(ad);
             await appDbContext.SaveChangesAsync();
         }
+
+        public async Task Update(Advertisement ad)
+        {
+            appDbContext.Advertisements.Update(ad);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(string uid)
+        {
+            var ad = await appDbContext.Advertisements.FirstAsync(ad => ad.UID == uid);
+            if (ad != null)
+            {
+                appDbContext.Advertisements.Remove(ad);
+                await appDbContext.SaveChangesAsync();
+            }
+
+        }
+
+        public IEnumerable<string> GetCities(string startsWith)
+        {
+            var cities = appDbContext.Advertisements
+                .Where(ad => ad.City.ToLower().StartsWith(startsWith.ToLower()))
+                .Select(ad => ad.City);
+            return cities;
+        }
     }
 }

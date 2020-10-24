@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheAdvertiser.Models
 {
@@ -7,6 +9,15 @@ namespace TheAdvertiser.Models
     {
         [Key]
         public string UID { get; set; }
+
+        [StringLength(20)]
+        public string ContentType { get; set; }
+        [Display(Name = "Photo")]
+        public byte[] Photo { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Photo")]
+        public IFormFile PhotoData { get; set; }
 
         [Required]
         [StringLength(200)]

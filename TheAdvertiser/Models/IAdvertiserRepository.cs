@@ -10,5 +10,8 @@ namespace TheAdvertiser.Models
         Task<Advertisement> GetAd(string uid);
         Task<IEnumerable<Advertisement>> GetAllAds();
         Task PutAd(Advertisement ad);
+        Task Update(Advertisement ad);
+        Task Delete(string uid);
+        IEnumerable<string> GetCities(string startsWith);
     }
 }

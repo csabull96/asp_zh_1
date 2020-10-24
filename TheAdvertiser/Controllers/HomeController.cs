@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using TheAdvertiser.Extensions;
 using TheAdvertiser.Models;
@@ -14,12 +17,19 @@ namespace TheAdvertiser.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IWebHostEnvironment hostEnv;
         private readonly UserManager<AppUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IAdvertiserRepository advertiserRepository;
 
-        public HomeController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IAdvertiserRepository advertiserRepository)
+        public JsonResult JSON { get; private set; }
+
+        public HomeController(IWebHostEnvironment hostEnv,
+            UserManager<AppUser> userManager, 
+            RoleManager<IdentityRole> roleManager, 
+            IAdvertiserRepository advertiserRepository)
         {
+            this.hostEnv = hostEnv;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.advertiserRepository = advertiserRepository;
@@ -48,6 +58,24 @@ namespace TheAdvertiser.Controllers
             return View(ads);
         }
 
+        public async Task<IActionResult> GetPhoto(string uid)
+        {
+            var ad = await advertiserRepository.GetAd(uid);
+
+            try
+            {
+                return new FileContentResult(ad.Photo, ad.ContentType);
+            }
+            catch (Exception)
+            {
+                string path = Path.Combine(hostEnv.WebRootPath, "no_photo.png");
+                byte[] defaultPhoto = System.IO.File.ReadAllBytes(path);
+                string contentType = "image/png";
+
+                return new FileContentResult(defaultPhoto, contentType);
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult Create()
@@ -55,6 +83,7 @@ namespace TheAdvertiser.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(Advertisement ad)
         {
@@ -62,11 +91,42 @@ namespace TheAdvertiser.Controllers
             {
                 var user = await userManager.GetUserAsync(User);
                 ad.UID = Guid.NewGuid().ToString();
+                
+                using (var stream = ad.PhotoData.OpenReadStream())
+                {
+                    ad.ContentType = ad.PhotoData.ContentType;
+                    ad.Photo = new byte[ad.PhotoData.Length];
+                    stream.Read(ad.Photo, 0, ad.Photo.Length);
+                }
+
                 ad.Email = user.Email;
                 ad.Created = DateTime.Now;
                 await advertiserRepository.PutAd(ad);
             }
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(string uid)
+        {
+            var ad = await advertiserRepository.GetAd(uid); 
+            return View(ad);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Advertisement ad)
+        {
+            await advertiserRepository.Update(ad);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string uid)
+        {
+            await advertiserRepository.Delete(uid);
             return RedirectToAction(nameof(Index));
         }
 

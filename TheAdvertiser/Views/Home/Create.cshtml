@@ -11,32 +11,37 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReceivingOption" class="control-label"></label>
-                <select asp-for="ReceivingOption" asp-items="Html.GetEnumSelectList<ParcelReceivingOption>()" class="form-control"></select>
-                <span asp-validation-for="ReceivingOption" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+		<form asp-action="Create" method="post" enctype="multipart/form-data">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="PhotoData" class="control-label"></label>
+				<input type="file" asp-for="PhotoData" class="form-control-file" />
+				<span asp-validation-for="PhotoData" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Price" class="control-label"></label>
+				<input asp-for="Price" class="form-control" />
+				<span asp-validation-for="Price" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="City" class="control-label"></label>
+				<input id="city_tb" asp-for="City" class="form-control" onkeyup="auto_complete()"/>
+				<span asp-validation-for="City" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ReceivingOption" class="control-label"></label>
+				<select asp-for="ReceivingOption" asp-items="Html.GetEnumSelectList<ParcelReceivingOption>()" class="form-control"></select>
+				<span asp-validation-for="ReceivingOption" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
     </div>
 </div>
 
@@ -46,4 +51,26 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	<script>
+		var previous_length = 0;
+		
+		function auto_complete() {
+			const city_tb = $("#city_tb");
+
+			if (previous_length == 2 && city_tb.val().length == 3) {
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function () {
+					if (this.readyState == 4 && this.status == 200) {
+						if (this.responseText != null && this.responseText != "") {
+							city_tb.val(this.responseText);
+						}
+					}
+				}
+				xhttp.open("GET", "https://localhost:44389/api/City/" + city_tb.val(), true);
+				xhttp.send();
+			}
+
+			previous_length = city_tb.val().length;
+		}
+	</script>
 }

@@ -36,6 +36,8 @@ namespace TheAdvertiser
                 options.UseLazyLoadingProxies();
             });
 
+            //services.AddMvc(options => options.EnableEndpointRouting = false);
+
             services.AddTransient<IAdvertiserRepository, AdvertiserRepository>();
 
             services.AddDefaultIdentity<AppUser>(options =>
@@ -75,6 +77,10 @@ namespace TheAdvertiser
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            //app.UseMvcWithDefaultRoute();
+
+
 
             app.UseEndpoints(endpoints =>
             {
